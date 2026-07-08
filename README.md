@@ -18,7 +18,7 @@ Chronicle is an open‑source publishing solution built for long‑form, data‑
 
 ```bash
 git clone https://github.com/Hafsa2122/Chronicle-Publish-Investigative-Journalism.git
-cd Chronicle-Frontend
+cd Chronicle-Publish-Investigative-Journalism
 npm install
 npm run dev
 ```

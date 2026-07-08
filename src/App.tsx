@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import {
-  Archive, ArrowRight, ArrowUpRight, Blocks, Bold, BookOpen, ChevronRight,
+  ArrowRight, ArrowUpRight, Blocks, Bold, BookOpen, ChevronRight,
   Clock, Code2, Edit3, Eye, FileText, Globe,
   Heading1, Highlighter, Image, Italic, Link2, List, Lock,
-  Mail, Menu, Moon, Newspaper, PenLine, Quote, Search, Settings,
-  Sun, Table2, Timer, TrendingUp, Type, Underline, Upload, Users, X, Zap
+  Menu, Moon, Newspaper, PenLine, Quote, Search, Settings,
+  Sun, Table2, Timer, TrendingUp, Type, Underline, Users, X, Zap
 } from "lucide-react";
 
 /* ===== PAGE REGISTRY ===== */
@@ -108,7 +108,7 @@ export default function App() {
     <div className={`min-h-screen transition-colors duration-300 ${dark ? "bg-[#0e0f11] text-[#e4e4e7]" : "bg-paper text-ink"}`}>
       <Header page={page} navigate={navigate} menuOpen={menuOpen} setMenuOpen={setMenuOpen} dark={dark} setDark={setDark} onSearch={() => setSearchOpen(true)} />
       {searchOpen && <SearchModal dark={dark} navigate={navigate} onClose={() => setSearchOpen(false)} />}
-      <main className="mx-auto max-w-6xl px-4 pb-20 pt-8 sm:px-6 lg:px-8">
+      <main className="w-full px-4 pb-20 pt-8 sm:px-6 lg:px-8">
         <div key={page} className={dir === "r" ? "anim-slide-l" : "anim-slide-r"}>
           {page === "home" && <HomePage navigate={navigate} dark={dark} />}
           {page === "editor" && <EditorPage dark={dark} />}
@@ -117,6 +117,7 @@ export default function App() {
           {page === "collab" && <CollabPage dark={dark} />}
           {page === "paywall" && <PaywallPage dark={dark} />}
         {page === "selfhosted" && <SelfHostedPage dark={dark} />}
+          {page === "settings" && <SettingsPage dark={dark} />}
           {infoPage && <InfoPage dark={dark} title={infoPage.title} sections={infoPage.sections} navigate={navigate} />}
         </div>
       </main>
@@ -169,7 +170,7 @@ function Header({ page, navigate, menuOpen, setMenuOpen, dark, setDark, onSearch
   const inactiveCls = dark ? "text-zinc-400 hover:bg-white/5 hover:text-white" : "text-ink-3 hover:bg-paper-2 hover:text-ink";
   return (
     <header className={`sticky top-0 z-40 border-b backdrop-blur-xl ${bg}`}>
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+      <div className="w-full flex items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <button onClick={() => navigate("home")} className="flex items-center gap-2.5">
           <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${dark ? "bg-white text-[#0e0f11]" : "bg-ink text-paper"}`}><Newspaper className="h-4 w-4" /></div>
           <div className="hidden sm:block">
@@ -329,9 +330,9 @@ function HomePage({ navigate, dark }: { navigate: (p: PageId) => void; dark: boo
       <section className="pt-8 lg:pt-16">
         <p className={`anim-fade-up text-xs font-semibold uppercase tracking-[0.25em] ${dark ? "text-blue-400" : "text-link"}`}>Open-source Publishing</p>
         <h1 className="anim-fade-up delay-1 mt-4 font-serif text-4xl font-bold leading-[1.15] tracking-tight sm:text-5xl lg:text-6xl">
-          The CMS built for<br /><span className="highlight-sweep">investigative journalism.</span>
+          The CMS built for <span className="highlight-sweep">investigative journalism.</span>
         </h1>
-        <p className={`anim-fade-up delay-2 mt-6 max-w-2xl text-lg leading-8 ${bodyText}`}>
+        <p className={`anim-fade-up delay-2 mt-6 text-lg leading-8 ${bodyText}`}>
           Chronicle is a full-stack publishing platform purpose-built for investigative and longform journalism — structured story management, multimedia embedding, collaborative editing, and a reading experience optimized for 5,000–30,000 word deep dives.
         </p>
         <div className="anim-fade-up delay-3 mt-8 flex flex-wrap gap-3">
@@ -444,16 +445,43 @@ function SelfHostedPage({ dark }: { dark: boolean }) {
   );
 }
 
+
 function SettingsPage({ dark }: { dark: boolean }) {
-  // Placeholder Settings page; can be expanded later.
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const mutedText = dark ? "text-zinc-500" : "text-ink-3";
+  const cardBg = dark ? "border-white/10 bg-white/[0.03]" : "border-border bg-white";
+
+  const handleSave = () => {
+    setSaveStatus("saving");
+    setTimeout(() => {
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("idle"), 2500);
+    }, 800);
+  };
+
   return (
     <div className="space-y-6">
-      <h3 className={mutedText}>Settings page placeholder</h3>
-      <p className={mutedText}>The detailed settings can be accessed via the top navigation.</p>
+      <h3 className="text-xl font-semibold">Settings</h3>
+      <div className={`rounded-xl border p-6 ${cardBg}`}>
+        <p className={mutedText}>General configuration options go here.</p>
+        <div className="mt-4 flex flex-col gap-3">
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <input type="checkbox" className="rounded" defaultChecked /> Enable auto-save
+          </label>
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <input type="checkbox" className="rounded" /> Email notifications
+          </label>
+        </div>
+        <div className="mt-6 flex items-center gap-3">
+          <button onClick={handleSave} disabled={saveStatus === "saving"} className={`rounded-lg px-4 py-2 text-sm font-semibold transition hover:scale-[1.02] ${saveStatus === "saved" ? "bg-green-500 text-white hover:scale-100" : saveStatus === "saving" ? (dark ? "bg-white/50 text-[#0e0f11] cursor-wait hover:scale-100" : "bg-ink/70 text-paper cursor-wait hover:scale-100") : (dark ? "bg-white text-[#0e0f11]" : "bg-ink text-paper")}`}>
+            {saveStatus === "saving" ? "Saving..." : saveStatus === "saved" ? "✓ Saved" : "Save settings"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
+
 function EditorPage({ dark }: { dark: boolean }) {
   const [blocks, setBlocks] = useState([
     { id: "b1", type: "heading", content: "The Panama Papers: Inside the Leak" },
