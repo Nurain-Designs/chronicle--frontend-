@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:pages": "vite build && node scripts/demo-notice.mjs \"Edits stay in this browser tab.\""
   },
   "dependencies": {
     "clsx": "2.1.1",
